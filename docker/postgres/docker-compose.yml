@@ -13,7 +13,7 @@ services:
     networks:
       - postgres-vstore-network
     volumes:
-      #- ./sql_scripts:/docker-entrypoint-initdb.d/
+      - ./sql_scripts:/docker-entrypoint-initdb.d/
       - postgres_vstore_db:/var/lib/postgresql/data
       
   pgadmin:
