@@ -1,18 +1,40 @@
 version: "3.4"
    
 services:
-  db:
+  postgres_vstore:
     image: postgres:13
     container_name: postgres_vstore
-    restart: always
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     ports:
       - 5432:5432
+    restart: always
+    networks:
+      - postgres-vstore-network
     volumes:
       #- ./sql_scripts:/docker-entrypoint-initdb.d/
       - postgres_vstore_db:/var/lib/postgresql/data
       
+  pgadmin:
+    image: dpage/pgadmin4:5
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@vstore.pt"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - 15432:80
+    restart: always
+    depends_on:
+      - postgres_vstore
+    networks:
+      - postgres-vstore-network
+    volumes:
+      - pgadmin_vstore_db:/var/lib/pgadmin
+      
+networks: 
+  postgres-vstore-network:
+    driver: bridge
+    
 volumes:
   postgres_vstore_db:
+  pgadmin_vstore_db:
