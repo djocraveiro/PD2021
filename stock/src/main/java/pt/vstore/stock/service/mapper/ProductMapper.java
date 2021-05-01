@@ -27,14 +27,12 @@ public class ProductMapper implements
 
     @Override
     public ProductEntity mapToEntity(Product src) {
-        ProductEntity dst = new ProductEntity(src.getId());
-        return mapToEntity(src, dst);
+        ProductEntity dst = new ProductEntity();
+        return updateEntity(src, dst);
     }
 
     @Override
-    public ProductEntity mapToEntity(Product src,
-                                     ProductEntity dst) {
-
+    public ProductEntity updateEntity(Product src, ProductEntity dst) {
         dst.setName(src.getName());
         dst.setDescription(src.getDescription());
         dst.setAvailable(src.getAvailable());

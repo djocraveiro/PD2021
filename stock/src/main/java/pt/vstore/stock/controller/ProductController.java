@@ -2,6 +2,7 @@ package pt.vstore.stock.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +12,11 @@ import pt.vstore.stock.dto.Product;
 import pt.vstore.stock.service.ProductService;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/product")
+@Tag(name = "Product", description = "The product API" )
 public class ProductController {
 
     @Autowired
@@ -23,7 +26,7 @@ public class ProductController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a product by its id")
     public Product findById(
-            @Parameter(description = "id of the product") @PathVariable String id) {
+            @Parameter(description = "id of the product") @PathVariable UUID id) {
 
         return service.findById(id);
     }
@@ -51,7 +54,7 @@ public class ProductController {
     @PutMapping("/{id}")
     @Operation(summary = "Update a product")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateProduct(@PathVariable("id") final String id,
+    public void updateProduct(@PathVariable("id") final UUID id,
                                     @RequestBody final Product prod) {
 
         prod.setId(id);
@@ -61,7 +64,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable("id") final String id) {
+    public void deleteProduct(@PathVariable("id") final UUID id) {
         service.deleteProduct(id);
     }
 }

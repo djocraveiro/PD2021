@@ -1,21 +1,30 @@
 package pt.vstore.stock.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.domain.Persistable;
+
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
-public class ProductEntity {
+@Data
+@AllArgsConstructor
+@Table(name = "product", schema = "public")
+public class ProductEntity implements Persistable<UUID> {
 
-    @Id //TODO: generate id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @Id
+    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
+    @GeneratedValue(generator = "UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
 
     @Column(name = "available", nullable = false)
@@ -25,23 +34,18 @@ public class ProductEntity {
     private float price;
 
 
-    protected ProductEntity() {
+    public ProductEntity() {
+        this.id = null;
         this.name = "";
         this.description = "";
         this.available = 0;
         this.price = 0;
     }
 
-    public ProductEntity(String id) {
-        this();
 
-        this.id = id;
-    }
+    public UUID getId() { return id; }
 
-
-    public String getId() { return id; }
-
-    public void setId(String id) { this.id = id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getName() { return name; }
 
@@ -58,6 +62,12 @@ public class ProductEntity {
     public float getPrice() { return price; }
 
     public void setPrice(float price) { this.price = price; }
+
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
 
 
     @Override
