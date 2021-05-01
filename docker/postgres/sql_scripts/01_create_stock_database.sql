@@ -1,5 +1,6 @@
-DROP DATABASE if exists stock_db;
-drop role if exists pguser;
+--CREATE DB ===================================================================
+DROP DATABASE IF EXISTS stock_db;
+DROP role IF EXISTS pguser;
 
 BEGIN;
 CREATE USER pguser WITH encrypted password 'pgpass';
@@ -14,9 +15,24 @@ CREATE DATABASE stock_db
     CONNECTION LIMIT = -1;
 
 \c stock_db;
-grant usage on schema public to public;
-grant create on schema public to public;
- 
+GRANT USAGE ON SCHEMA PUBLIC TO PUBLIC;
+GRANT CREATE ON SCHEMA PUBLIC TO PUBLIC;
 COMMENT ON DATABASE stock_db IS 'Virtual store stock api database';
-
 GRANT ALL PRIVILEGES ON DATABASE stock_db TO pguser;
+
+
+--CREATE DB TABLES ============================================================
+BEGIN;
+
+DROP TABLE IF EXISTS public.product;
+
+CREATE TABLE public.product (
+	id uuid NOT NULL,
+	name VARCHAR(50) COLLATE pg_catalog."default",
+	description VARCHAR(500) NOT NULL,
+	available INT NOT NULL,
+	price REAL NOT NULL,
+	CONSTRAINT product_pkey PRIMARY KEY (id)
+);
+
+COMMIT;
