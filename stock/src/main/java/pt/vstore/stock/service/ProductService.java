@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.vstore.stock.dto.Product;
-import pt.vstore.stock.dto.mapper.ProductMapper;
+import pt.vstore.stock.service.mapper.ProductMapper;
 import pt.vstore.stock.exception.ProductNotFoundException;
 import pt.vstore.stock.model.entity.ProductEntity;
 import pt.vstore.stock.model.repository.ProductRepository;
@@ -71,7 +71,8 @@ public class ProductService {
 
 
     private ProductEntity findProductById(String id) {
-        return repository.findById(id).orElseThrow(() -> new ProductNotFoundException());
+        return repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
 }

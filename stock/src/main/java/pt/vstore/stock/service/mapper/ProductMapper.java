@@ -1,4 +1,4 @@
-package pt.vstore.stock.dto.mapper;
+package pt.vstore.stock.service.mapper;
 
 import org.springframework.stereotype.Service;
 import pt.vstore.stock.dto.Product;

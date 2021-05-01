@@ -1,4 +1,4 @@
-package pt.vstore.stock.dto.mapper;
+package pt.vstore.stock.service.mapper;
 
 public interface IEntityMapper<TSource, TDestiny> {
 
