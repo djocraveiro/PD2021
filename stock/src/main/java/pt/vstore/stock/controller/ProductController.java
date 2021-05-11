@@ -15,8 +15,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/product")
-@Tag(name = "Product", description = "The product API" )
+@RequestMapping(value = "/api/v1/product")
+@Tag(name = "Product", description = "The product API v1" )
 public class ProductController {
 
     @Autowired

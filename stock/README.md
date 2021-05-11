@@ -11,3 +11,7 @@ Src: https://www.baeldung.com/spring-rest-openapi-documentation
 
 ## Spring + Postgres
 Src: https://dzone.com/articles/bounty-spring-boot-and-postgresql-database
+
+
+## Spring + REST
+Src: https://spring.io/guides/tutorials/rest/
