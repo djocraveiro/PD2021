@@ -41,6 +41,7 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package --file ./stock/pom.xml' 
             }
         }
+
         stage('Test Preparation') {
             when {
                 expression { params.RUN_TESTS == true }
@@ -50,6 +51,7 @@ pipeline {
                 sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
             }
         }
+
         stage('Test') {
             when {
                 expression { params.RUN_TESTS == true }
@@ -71,6 +73,7 @@ pipeline {
                 }
             }
         }
+
         stage('Package') {
             agent {
                 docker {
@@ -85,11 +88,22 @@ pipeline {
                 archiveArtifacts artifacts: 'stock/target/*.jar', fingerprint: true
             }
         }
+
         stage('Push to DockerHub') { 
             steps {
                 echo "=== build and push docker image ==="
+                dockerBuildAndPublish {
+                    repositoryName(params.DOCKERHUB_REP)
+                    tag('${GIT_REVISION,length=9}')
+                    registryCredentials(params.DOCKERHUB_CREDENTIALS)
+                    forcePull(false)
+                    forceTag(false)
+                    createFingerprints(false)
+                    skipDecorate()
+                }
             }
         }
+
         stage('Deploy') { 
             steps {
                 echo "=== deploy ==="
