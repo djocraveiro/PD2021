@@ -4,6 +4,6 @@ VOLUME /tmp
 
 #add required dependencies if necessary
 
-ADD stock/target/stock.jar app.jar
+ADD stock/target/stock-0.0.1-SNAPSHOT.jar app.jar
 
 ENTRYPOINT exec java $JAVA_OPTS -jar /app.jar
