@@ -6,6 +6,13 @@ pipeline {
         }
     }
 
+    parameters {
+        string (
+            defaultValue: 'df_inventory',
+            description: 'ansible inventory',
+            name : 'ANSIBLE_INVENTORY')
+    }
+
     environment {
         APP_NAME = "vstore-java-pipeline"
         APP_CONTEXT_ROOT = "/"
@@ -22,14 +29,14 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
+            /*agent {
                 docker {
                     image 'postgres:13'
                     args '--network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"'
                     // Run the container on the node specified at the top-level of the Pipeline, in the same workspace, rather than on a new node entirely:
                     reuseNode true
                 }
-            }
+            }*/
             steps {
                 echo "=== testing ==="
                 //sh 'docker run --rm -u root --network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
