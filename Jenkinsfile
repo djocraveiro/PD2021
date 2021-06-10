@@ -25,9 +25,10 @@ pipeline {
         stage('Test') { 
             steps {
                 echo "=== testing ==="
-                sh 'docker run rm -p 5432:5432 --name postgres_vstore_ci -d postgres:13'
+                sh 'docker run --rm --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
                 sh 'mvn test --file ./stock/pom.xml'
                 sh 'docker stop postgres_vstore_ci'
+                sh 'docker volume rm postgres_vstore_ci'
             }
             post {
                 always {
