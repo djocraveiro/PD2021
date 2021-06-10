@@ -5,7 +5,7 @@ pipeline {
         booleanParam (
             defaultValue: true,
             description: 'run tests',
-            name : 'RUN_TESTS'
+            name : 'RUN_TESTS')
         string (
             defaultValue: 'djocraveiro/pd_2021',
             description: 'dockerhub repository',
