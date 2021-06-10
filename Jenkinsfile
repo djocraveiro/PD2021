@@ -25,7 +25,7 @@ pipeline {
         stage('Test') { 
             steps {
                 echo "=== testing ==="
-                sh 'mvn test' 
+                sh 'mvn test --file ./stock/pom.xml' 
             }
             /*post {
                 always {
