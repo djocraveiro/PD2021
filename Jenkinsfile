@@ -32,7 +32,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "vstore-java-pipeline"
+        APP_NAME = "vstore"
         APP_LISTENING_PORT = "8080"
         PG_CONTAINER_NAME = "postgres_vstore_ci"
     }
@@ -104,19 +104,17 @@ pipeline {
         stage('Push to DockerHub') { 
             steps {
                 echo "=== build and push docker image ==="
-                dockerBuildAndPublish {
-                    repositoryName(params.DOCKERHUB_REP)
-                    tag('${GIT_REVISION,length=9}')
-                    registryCredentials(params.DOCKERHUB_CREDENTIALS)
-                    forcePull(false)
-                    forceTag(false)
-                    createFingerprints(false)
-                    skipDecorate()
+                sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_REVISION,length=9} -t ${params.DOCKERHUB_REP}:latest ."
+
+                withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
+                    sh "docker push ${params.DOCKERHUB_REP}:$${GIT_REVISION,length=9}"
+                    sh "docker tag ${params.DOCKERHUB_REP}:${GIT_REVISION,length=9} ${params.DOCKERHUB_REP}:latest"
                 }
             }
         }
 
-        stage('Deploy') { 
+        stage('Deploy') {
+            //TODO agent
             steps {
                 echo "=== deploy ==="
                 //TODO call ansible playbook here
