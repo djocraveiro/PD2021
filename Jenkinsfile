@@ -1,6 +1,21 @@
 pipeline {
     agent any
 
+    options {
+        buildDiscarder(
+            logRotator(
+                // number of build logs to keep
+                numToKeepStr:'5',
+                // history to keep in days
+                //daysToKeepStr: '15',
+                // artifacts are kept for days
+                //artifactDaysToKeepStr: '15',
+                // number of builds have their artifacts kept
+                //artifactNumToKeepStr: '5'
+            )
+        )
+    }
+
     parameters {
         booleanParam (
             defaultValue: true,
@@ -24,10 +39,6 @@ pipeline {
         APP_NAME = "vstore-java-pipeline"
         APP_LISTENING_PORT = "8080"
         PG_CONTAINER_NAME = "postgres_vstore_ci"
-    }
-
-    logRotator {
-        numToKeep 5
     }
 
     stages {
