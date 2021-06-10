@@ -4,6 +4,10 @@ pipeline {
             image 'maven:3.8.1-adoptopenjdk-11'
             args '--network host -v $HOME/.m2:/root/.m2'
         }
+        docker {
+            image 'postgres:13'
+            args '--network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"'
+        }
     }
 
     environment {
@@ -22,12 +26,6 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
-                docker {
-                    image 'postgres:13'
-                    args '--rm -u root --network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"'
-                }
-            }
             steps {
                 echo "=== testing ==="
                 //sh 'docker run --rm -u root --network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
