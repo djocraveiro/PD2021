@@ -23,7 +23,7 @@ pipeline {
     environment {
         APP_NAME = "vstore-java-pipeline"
         APP_LISTENING_PORT = "8080"
-        DOCKER_HUB = credentials(params.DOCKERHUB_CREDENTIALS)
+        //DOCKER_HUB = credentials(params.DOCKERHUB_CREDENTIALS)
         PG_CONTAINER_NAME = "postgres_vstore_ci"
     }
 
