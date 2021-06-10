@@ -35,6 +35,7 @@ pipeline {
         APP_NAME = "vstore"
         APP_LISTENING_PORT = "8080"
         PG_CONTAINER_NAME = "postgres_vstore_ci"
+        GIT_COMMIT_REV=''
     }
 
     stages {
@@ -104,11 +105,15 @@ pipeline {
         stage('Push to DockerHub') { 
             steps {
                 echo "=== build and push docker image ==="
-                sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_REVISION,length=9} -t ${params.DOCKERHUB_REP}:latest ."
+                script {    
+                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                }
+                
+                sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP}:latest ."
 
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
-                    sh "docker push ${params.DOCKERHUB_REP}:$${GIT_REVISION,length=9}"
-                    sh "docker tag ${params.DOCKERHUB_REP}:${GIT_REVISION,length=9} ${params.DOCKERHUB_REP}:latest"
+                    sh "docker push ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}"
+                    sh "docker tag ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP}:latest"
                 }
             }
         }
