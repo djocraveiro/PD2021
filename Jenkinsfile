@@ -108,7 +108,7 @@ pipeline {
                 script {    
                     GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
                 }
-                
+
                 sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP}:latest ."
 
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
@@ -119,7 +119,13 @@ pipeline {
         }
 
         stage('Deploy') {
-            //TODO agent
+            agent {
+                docker {
+                    image 'cicd-ansible:latest'
+                    args '--network host -v $HOME/.m2:/root/.m2'
+                    reuseNode true
+                }
+            }
             steps {
                 echo "=== deploy ==="
                 //TODO call ansible playbook here
