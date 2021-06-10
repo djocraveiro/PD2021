@@ -27,16 +27,16 @@ pipeline {
                 echo "=== testing ==="
                 sh 'mvn test --file ./stock/pom.xml' 
             }
-            /*post {
+            post {
                 always {
                     junit 'target/surefire-reports/*.xml' 
                 }
-            }*/
+            }
         }
         stage('Deliver') { 
             steps {
-                echo "=== deploying ==="
-                sh './jenkins/scripts/deliver.sh' 
+                echo "=== delivering ==="
+                sh './maven-deliver.sh' 
             }
         }
     }
