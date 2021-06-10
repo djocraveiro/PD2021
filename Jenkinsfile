@@ -84,7 +84,7 @@ pipeline {
             }
             steps {
                 echo "=== packaging project ==="
-                sh "mvn package -DskipTests"
+                sh "mvn package -DskipTests --file ./stock/pom.xml"
                 archiveArtifacts artifacts: 'stock/target/*.jar', fingerprint: true
             }
         }
