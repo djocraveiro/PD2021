@@ -25,7 +25,9 @@ pipeline {
 
     stages {
         stage('Preparation') {
-            sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
+            steps {
+                sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
+            }
         }
         stage('Build') {
             agent {
@@ -65,13 +67,6 @@ pipeline {
             steps {
                 echo "=== delivering ==="
                 sh './maven-deliver.sh' 
-            }
-        }
-
-        post {
-            always {
-                sh 'docker stop $PG_CONTAINER_NAME'
-                sh 'docker volume rm $PG_CONTAINER_NAME'
             }
         }
     }
