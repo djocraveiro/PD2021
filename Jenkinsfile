@@ -1,9 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'maven:3.8.1-adoptopenjdk-11' 
-            //args '--network vstore'
-            args '-v $HOME/.m2:/root/.m2'
+            image 'maven:3.8.1-adoptopenjdk-11'
+            args '--network host -v $HOME/.m2:/root/.m2'
         }
     }
 
@@ -25,14 +24,14 @@ pipeline {
         stage('Test') { 
             steps {
                 echo "=== testing ==="
-                //sh 'docker run --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
+                sh 'docker run --network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
                 sh 'mvn test --file ./stock/pom.xml'
-                //sh 'docker stop postgres_vstore_ci'
-                //sh 'docker volume rm postgres_vstore_ci'
+                sh 'docker stop postgres_vstore_ci'
+                sh 'docker volume rm postgres_vstore_ci'
             }
             post {
                 always {
-                    junit './stock/target/surefire-reports/*.xml' 
+                    junit 'stock/target/surefire-reports/*.xml'
                 }
             }
         }
