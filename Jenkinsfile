@@ -19,6 +19,7 @@ pipeline {
         stage('Build') { 
             steps {
                 echo "=== building ==="
+                sh 'cd stock'
                 sh 'mvn -B -DskipTests clean package' 
             }
         }
