@@ -16,9 +16,9 @@ pipeline {
 
     environment {
         APP_NAME = "vstore-java-pipeline"
-        APP_CONTEXT_ROOT = "/"
+        //APP_CONTEXT_ROOT = "/"
         APP_LISTENING_PORT = "8080"
-        TEST_CONTAINER_NAME = "ci-${APP_NAME}-${BUILD_NUMBER}"
+        //TEST_CONTAINER_NAME = "ci-${APP_NAME}-${BUILD_NUMBER}"
         DOCKER_HUB = credentials("dockerhub")
         PG_CONTAINER_NAME = "postgres_vstore_ci"
     }
@@ -33,7 +33,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.8.1-adoptopenjdk-11'
-                    args '--network --name $ TEST_CONTAINER_NAME host -v $HOME/.m2:/root/.m2'
+                    args '--network host -v $HOME/.m2:/root/.m2'
                     reuseNode true
                 }
             }
@@ -46,7 +46,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.8.1-adoptopenjdk-11'
-                    args '--network --name $ TEST_CONTAINER_NAME host -v $HOME/.m2:/root/.m2'
+                    args '--network host -v $HOME/.m2:/root/.m2'
                     reuseNode true
                 }
             }
