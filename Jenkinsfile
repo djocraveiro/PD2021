@@ -69,6 +69,8 @@ pipeline {
             post {
                 always {
                     junit 'stock/target/surefire-reports/*.xml'
+                    sh 'docker stop $PG_CONTAINER_NAME'
+                    sh 'docker volume rm $PG_CONTAINER_NAME'
                 }
             }
         }
@@ -114,10 +116,6 @@ pipeline {
     post {
         always {
             echo 'Lest clean up this mess -.-'
-
-            sh 'docker stop $PG_CONTAINER_NAME'
-            sh 'docker volume rm $PG_CONTAINER_NAME'
-
             //deleteDir() /* clean up our workspace */
         }
         success {
