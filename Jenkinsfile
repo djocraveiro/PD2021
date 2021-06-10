@@ -4,14 +4,10 @@ pipeline {
     options {
         buildDiscarder(
             logRotator(
-                // number of build logs to keep
-                numToKeepStr:'5',
-                // history to keep in days
-                //daysToKeepStr: '15',
-                // artifacts are kept for days
-                //artifactDaysToKeepStr: '15',
-                // number of builds have their artifacts kept
-                //artifactNumToKeepStr: '5'
+                numToKeepStr:'5', // number of build logs to keep
+                //daysToKeepStr: '15', // history to keep in days
+                //artifactDaysToKeepStr: '15', // artifacts are kept for days
+                artifactNumToKeepStr: '5' // number of builds have their artifacts kept
             )
         )
     }
