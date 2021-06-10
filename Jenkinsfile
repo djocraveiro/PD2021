@@ -38,7 +38,7 @@ pipeline {
             }
             steps {
                 echo "=== building ==="
-                sh 'mvn -B -DskipTests clean package --file ./stock/pom.xml' 
+                sh 'mvn -B -DskipTests clean compile --file ./stock/pom.xml'
             }
         }
 
