@@ -1,10 +1,11 @@
 pipeline {
-    agent {
+    agent any
+    /*agent {
         docker {
             image 'maven:3.8.1-adoptopenjdk-11'
             args '--network host -v $HOME/.m2:/root/.m2'
         }
-    }
+    }*/
 
     parameters {
         string (
@@ -22,7 +23,14 @@ pipeline {
     }
 
     stages {
-        stage('Build') { 
+        stage('Build') {
+            agent {
+                docker {
+                    image 'maven:3.8.1-adoptopenjdk-11'
+                    args '--network host -v $HOME/.m2:/root/.m2'
+                    reuseNode true
+                }
+            }
             steps {
                 echo "=== building ==="
                 sh 'mvn -B -DskipTests clean package --file ./stock/pom.xml' 
@@ -33,7 +41,6 @@ pipeline {
                 docker {
                     image 'postgres:13'
                     args '--network host --name postgres_vstore_ci -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "postgres_vstore_ci:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"'
-                    // Run the container on the node specified at the top-level of the Pipeline, in the same workspace, rather than on a new node entirely:
                     reuseNode true
                 }
             }*/
