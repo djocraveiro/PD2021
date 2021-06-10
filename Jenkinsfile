@@ -26,6 +26,10 @@ pipeline {
         PG_CONTAINER_NAME = "postgres_vstore_ci"
     }
 
+    logRotator {
+        numToKeep 5
+    }
+
     stages {
         stage('Build') {
             agent {
