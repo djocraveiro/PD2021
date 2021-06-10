@@ -25,7 +25,9 @@ pipeline {
         stage('Test') { 
             steps {
                 echo "=== testing ==="
-                sh 'mvn test --file ./stock/pom.xml' 
+                sh 'docker run rm -p 5432:5432 --name postgres_vstore_ci -d postgres:13'
+                sh 'mvn test --file ./stock/pom.xml'
+                sh 'docker stop postgres_vstore_ci'
             }
             post {
                 always {
