@@ -145,7 +145,7 @@ pipeline {
 
     post {
         always {
-            echo 'Lest clean up this mess -.-'
+            echo 'Lets clean up this mess -.-'
             //deleteDir() /* clean up our workspace */
         }
         success {
