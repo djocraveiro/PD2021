@@ -128,8 +128,8 @@ pipeline {
             }
             steps {
                 echo "=== deploy ==="
-                echo "ansible --version"
-                echo sh(returnStdout: true, "ls").trim()
+                sh "ansible --version"
+                sh "ls -all"
             }
         }
     }
