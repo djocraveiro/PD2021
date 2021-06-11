@@ -128,7 +128,8 @@ pipeline {
             }
             steps {
                 echo "=== deploy ==="
-                //TODO call ansible playbook here
+                echo "ansible --version"
+                echo "$(ls)"
             }
         }
     }
