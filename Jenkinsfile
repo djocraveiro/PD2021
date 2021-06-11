@@ -103,6 +103,10 @@ pipeline {
         }
 
         stage('Push to DockerHub') { 
+            when {
+                //TODO remove this block later
+                expression { params.RUN_TESTS == true }
+            }
             steps {
                 echo "=== build and push docker image ==="
                 script {    
@@ -128,6 +132,10 @@ pipeline {
             }
             steps {
                 echo "=== deploy ==="
+                script {    
+                    GIT_COMMIT_REV = "2a15074"
+                }
+
                 sh "ansible --version"
                 sh "ls -all"
             }
