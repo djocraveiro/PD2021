@@ -132,12 +132,13 @@ pipeline {
             }
             steps {
                 echo "=== deploy ==="
-                script {    
+                script {
+                    //TODO remove this block later  
                     GIT_COMMIT_REV = "2a15074"
                 }
 
                 sh "ansible --version"
-                sh "ls -all"
+                //TODO call ansible playbook
             }
         }
     }
