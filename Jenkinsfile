@@ -18,6 +18,10 @@ pipeline {
             description: 'run tests',
             name : 'RUN_TESTS')
         string (
+            defaultValue: 'djocraveiro/pd_2021_pg',
+            description: 'dockerhub public repository',
+            name : 'DOCKERHUB_REP_DB')
+        string (
             defaultValue: 'djocraveiro/pd_2021',
             description: 'dockerhub repository',
             name : 'DOCKERHUB_REP')
@@ -108,11 +112,18 @@ pipeline {
                 expression { params.RUN_TESTS == true }
             }
             steps {
-                echo "=== build and push docker image ==="
+                echo "=== build and push docker postgres image ==="
                 script {    
                     GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
                 }
+                
+                sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
+                withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
+                    sh "docker push ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
+                    sh "docker tag ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP_DB}:latest"
+                }
 
+                echo "=== build and push docker webapp image ==="
                 sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP}:latest ."
 
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
@@ -138,7 +149,7 @@ pipeline {
                 }
 
                 sh "ansible --version"
-                sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
+                sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
             }
         }
     }

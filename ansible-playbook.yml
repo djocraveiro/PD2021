@@ -22,7 +22,7 @@
     - name: Create postgres container
       ansible.builtin.docker_container:
         name: postgres_vstore_ci
-        image: postgres:13
+        image: "{{ DB_IMAGE }}"
         state: started
         recreate: yes
         ports:
@@ -63,4 +63,4 @@
         state: started
         recreate: yes
         ports:
-          - "9000:80"
+          - "9000:8080"
