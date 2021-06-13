@@ -27,8 +27,8 @@
         recreate: yes
         ports:
           - "5432:5432"
+        network_mode: bridge
         volumes:
-          - "./docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"
           - "/home/$USER/postgres_vstore_ci:/var/lib/postgresql/data"
         env:
           POSTGRES_USER: "admin"
@@ -64,3 +64,6 @@
         recreate: yes
         ports:
           - "9000:8080"
+        network_mode: bridge
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://172.17.0.1:5432/stock_db"

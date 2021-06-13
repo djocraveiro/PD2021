@@ -65,7 +65,6 @@ pipeline {
                 }
                 
                 sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
-
             }
         }
 
@@ -75,7 +74,6 @@ pipeline {
             }
             steps {
                 echo "=== prepare for testing ==="
-                //sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
                 sh "docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data' -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
             }
         }
@@ -151,11 +149,12 @@ pipeline {
                 echo "=== deploy ==="
                 script {
                     //TODO remove this block later  
-                    GIT_COMMIT_REV = "2a15074"
+                    GIT_COMMIT_REV = "fd87f5a"
                 }
 
                 sh "ansible --version"
                 sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
+                sh "ansible-playbook -i df_inventory ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:fd87f5a WEB_IMAGE=djocraveiro/pd_2021:fd87f5a'"
             }
         }
     }
