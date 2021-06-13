@@ -59,8 +59,13 @@ pipeline {
 
         stage('Build DB Image') {
             steps {
-                echo "=== building ==="
-                sh 'mvn -B -DskipTests clean compile --file ./stock/pom.xml'
+                echo "=== building db image==="
+                script {    
+                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                }
+                
+                sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
+
             }
         }
 
@@ -70,12 +75,6 @@ pipeline {
             }
             steps {
                 echo "=== prepare for testing ==="
-                script {    
-                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-                }
-                
-                sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
-
                 //sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
                 sh "docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data' -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
             }
