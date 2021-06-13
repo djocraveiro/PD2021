@@ -138,7 +138,7 @@ pipeline {
                 }
 
                 sh "ansible --version"
-                //TODO call ansible playbook
+                sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
             }
         }
     }

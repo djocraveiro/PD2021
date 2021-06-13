@@ -1,0 +1,66 @@
+- name: Install docker
+  hosts: dbservers
+  become: true
+
+  tasks:
+    #- name: Install aptitude using apt
+    #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
+
+    #- name: Install required system packages
+    #  shell: curl -sSL https://get.docker.com/ | sh 
+    #  register: result
+
+    #- debug:
+    #   var=result
+
+    #- name: Add group docker to user guest
+    #  user:
+    #    name: guest
+    #    groups: docker
+    #    append: yes
+
+    - name: Create postgres container
+      ansible.builtin.docker_container:
+        name: postgres_vstore_ci
+        image: postgres:13
+        state: started
+        recreate: yes
+        ports:
+          - "5432:5432"
+        volumes:
+          - "./docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/"
+          - "/home/$USER/postgres_vstore_ci:/var/lib/postgresql/data"
+        env:
+          POSTGRES_USER: "admin"
+          POSTGRES_PASSWORD: "admin"
+
+
+- name: Install webserver
+  hosts: webservers
+  become: true
+
+  tasks:
+    #- name: Install aptitude using apt
+    #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
+
+    #- name: Install required system packages
+    #  shell: curl -sSL https://get.docker.com/ | sh 
+    #  register: result
+
+    #- debug:
+    #   var=result
+
+    #- name: Add group docker to user guest
+    #  user:
+    #    name: guest
+    #    groups: docker
+    #    append: yes
+
+    - name: Create app container container
+      ansible.builtin.docker_container:
+        name: vstore_ci
+        image: "{{ WEB_IMAGE }}"
+        state: started
+        recreate: yes
+        ports:
+          - "9000:80"
