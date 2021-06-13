@@ -149,7 +149,7 @@ pipeline {
                 echo "=== deploy ==="
                 script {
                     //TODO remove this block later  
-                    GIT_COMMIT_REV = "2a15074"
+                    GIT_COMMIT_REV = "15e4ab2"
                 }
 
                 sh "ansible --version"
