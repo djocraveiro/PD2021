@@ -1,7 +1,4 @@
 FROM postgres:13
-USER root
 
 WORKDIR /docker-entrypoint-initdb.d/
 COPY sql_scripts ./
-
-USER postgres

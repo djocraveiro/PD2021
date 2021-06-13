@@ -28,8 +28,6 @@
         ports:
           - "5432:5432"
         network_mode: bridge
-        volumes:
-          - "/home/$USER/postgres_vstore_ci:/var/lib/postgresql/data"
         env:
           POSTGRES_USER: "admin"
           POSTGRES_PASSWORD: "admin"
