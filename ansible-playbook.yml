@@ -6,12 +6,12 @@
     #- name: Install aptitude using apt
     #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
 
-    #- name: Install required system packages
-    #  shell: curl -sSL https://get.docker.com/ | sh 
-    #  register: result
+    - name: Install required system packages
+      shell: echo this is a test 
+      register: result
 
-    #- debug:
-    #   var=result
+    - debug:
+       var=result
 
     #- name: Add group docker to user guest
     #  user:
@@ -19,25 +19,25 @@
     #    groups: docker
     #    append: yes
 
-    - name: Create postgres container
-      docker_container:
-        name: postgres_vstore_ci
-        image: "{{ DB_IMAGE }}"
-        state: started
-        recreate: yes
-        ports:
-          - "5432:5432"
-        network_mode: bridge
-        env:
-          POSTGRES_USER: "admin"
-          POSTGRES_PASSWORD: "admin"
+    #- name: Create postgres container
+    #  ansible.builtin.docker_container:
+    #    name: postgres_vstore_ci
+    #    image: "{{ DB_IMAGE }}"
+    #    state: started
+    #    recreate: yes
+    #    ports:
+    #      - "5432:5432"
+    #    network_mode: bridge
+    #    env:
+    #      POSTGRES_USER: "admin"
+    #      POSTGRES_PASSWORD: "admin"
 
 
-- name: Install webserver
-  hosts: webservers
-  become: true
+#- name: Install webserver
+#  hosts: webservers
+#  become: true
 
-  tasks:
+#  tasks:
     #- name: Install aptitude using apt
     #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
 
@@ -54,14 +54,14 @@
     #    groups: docker
     #    append: yes
 
-    - name: Create app container container
-      docker_container:
-        name: vstore_ci
-        image: "{{ WEB_IMAGE }}"
-        state: started
-        recreate: yes
-        ports:
-          - "9000:8080"
-        network_mode: bridge
-        env:
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://172.17.0.1:5432/stock_db"
+    #- name: Create app container container
+    #  ansible.builtin.docker_container:
+    #    name: vstore_ci
+    #    image: "{{ WEB_IMAGE }}"
+    #    state: started
+    #    recreate: yes
+    #    ports:
+    #      - "9000:8080"
+    #    network_mode: bridge
+    #    env:
+    #      SPRING_DATASOURCE_URL: "jdbc:postgresql://172.17.0.1:5432/stock_db"
