@@ -20,7 +20,7 @@
     #    append: yes
 
     - name: Create postgres container
-      ansible.builtin.docker_container:
+      docker_container:
         name: postgres_vstore_ci
         image: "{{ DB_IMAGE }}"
         state: started
@@ -55,7 +55,7 @@
     #    append: yes
 
     - name: Create app container container
-      ansible.builtin.docker_container:
+      docker_container:
         name: vstore_ci
         image: "{{ WEB_IMAGE }}"
         state: started
