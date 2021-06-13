@@ -3,21 +3,21 @@
   become: true
 
   tasks:
-    #- name: Install aptitude using apt
-    #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
+    - name: Install aptitude using apt
+      apt: name=curl state=latest update_cache=yes force_apt_get=yes
 
     - name: Install required system packages
-      shell: echo this is a test 
+      shell: curl -sSL https://get.docker.com/ | sh 
       register: result
 
     - debug:
-       var=result
+      var=result
 
-    #- name: Add group docker to user guest
-    #  user:
-    #    name: guest
-    #    groups: docker
-    #    append: yes
+    - name: Add group docker to user guest
+      user:
+        name: guest
+        groups: docker
+        append: yes
 
     #- name: Create postgres container
     #  ansible.builtin.docker_container:
