@@ -57,13 +57,27 @@ pipeline {
             }
         }
 
+        stage('Build DB Image') {
+            steps {
+                echo "=== building ==="
+                sh 'mvn -B -DskipTests clean compile --file ./stock/pom.xml'
+            }
+        }
+
         stage('Test Preparation') {
             when {
                 expression { params.RUN_TESTS == true }
             }
             steps {
                 echo "=== prepare for testing ==="
-                sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
+                script {    
+                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                }
+                
+                sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
+
+                //sh 'docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v "$PG_CONTAINER_NAME:/var/lib/postgresql/data" -v "$(pwd)/docker/postgres/sql_scripts:/docker-entrypoint-initdb.d/" -d postgres:13'
+                sh "docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data' -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
             }
         }
 
@@ -85,8 +99,6 @@ pipeline {
             post {
                 always {
                     junit 'stock/target/surefire-reports/*.xml'
-                    sh 'docker stop $PG_CONTAINER_NAME'
-                    sh 'docker volume rm $PG_CONTAINER_NAME'
                 }
             }
         }
@@ -112,12 +124,7 @@ pipeline {
                 expression { params.RUN_TESTS == true }
             }
             steps {
-                echo "=== build and push docker postgres image ==="
-                script {    
-                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-                }
-                
-                sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
+                echo "=== push docker postgres image ==="
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
                     sh "docker push ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
                     sh "docker tag ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP_DB}:latest"
@@ -157,6 +164,10 @@ pipeline {
     post {
         always {
             echo 'Lets clean up this mess -.-'
+
+            sh 'docker stop $PG_CONTAINER_NAME'
+            sh 'docker volume rm $PG_CONTAINER_NAME'
+
             //deleteDir() /* clean up our workspace */
         }
         success {
