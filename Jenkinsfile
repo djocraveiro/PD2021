@@ -17,6 +17,10 @@ pipeline {
             defaultValue: true,
             description: 'run tests',
             name : 'RUN_TESTS')
+        booleanParam (
+            defaultValue: false,
+            description: 'publish images to dockerhub',
+            name : 'PUBLISH_IMAGES')
         string (
             defaultValue: 'djocraveiro/pd_2021_pg',
             description: 'dockerhub public repository',
@@ -57,14 +61,16 @@ pipeline {
             }
         }
 
-        stage('Build DB Image') {
+        stage('Build Images') {
             steps {
-                echo "=== building db image==="
+                echo "=== building images==="
                 script {    
                     GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
                 }
                 
                 sh "docker build -t ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP_DB}:latest ./docker/postgres"
+
+                sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP}:latest ."
             }
         }
 
@@ -117,8 +123,7 @@ pipeline {
 
         stage('Push to DockerHub') { 
             when {
-                //TODO remove this block later
-                expression { params.RUN_TESTS == true }
+                expression { params.PUBLISH_IMAGES == true }
             }
             steps {
                 echo "=== push docker postgres image ==="
@@ -128,8 +133,6 @@ pipeline {
                 }
 
                 echo "=== build and push docker webapp image ==="
-                sh "docker build -t ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} -t ${params.DOCKERHUB_REP}:latest ."
-
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
                     sh "docker push ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}"
                     sh "docker tag ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP}:latest"
@@ -146,11 +149,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "=== deploy ==="
-                script {
-                    //TODO remove this block later  
-                    GIT_COMMIT_REV = "15e4ab2"
-                }
-
                 sh "docker run -i --network host --rm -w /work -v \"\$(pwd)\":/work cicd-ansible:latest ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
             }
         }
@@ -159,7 +157,7 @@ pipeline {
     post {
         always {
             echo 'Lets clean up this mess -.-'
-            //deleteDir() /* clean up our workspace */
+            deleteDir() /* clean up our workspace */
         }
         success {
             echo 'I have succeeded :D'
