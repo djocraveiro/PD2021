@@ -1,19 +1,19 @@
 dbservers:
   hosts:
     machine_2:
-      ansible_ssh_host:  "localhost"
-      ansible_ssh_user:  "dcraveiro"
-      ansible_ssh_pass:  "dcraveiro"
-      ansible_sudo_pass:  "dcraveiro"
+      ansible_ssh_host: "localhost"
+      ansible_ssh_user: "ansible-user"
+      ansible_ssh_pass: "ansible-user"
+      ansible_sudo_pass: "ansible-user"
       ansible_python_interpreter: "/usr/bin/python3"
       ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
 
 webservers:
   hosts:
     machine_1:
-      ansible_ssh_host:  "localhost"
-      ansible_ssh_user:  "dcraveiro"
-      ansible_ssh_pass:  "dcraveiro"
-      ansible_sudo_pass:  "dcraveiro"
+      ansible_ssh_host: "localhost"
+      ansible_ssh_user: "ansible-user"
+      ansible_ssh_pass: "ansible-user"
+      ansible_sudo_pass: "ansible-user"
       ansible_python_interpreter: "/usr/bin/python3"
       ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
