@@ -6,6 +6,7 @@ dbservers:
       ansible_ssh_pass:  "dcraveiro"
       ansible_sudo_pass:  "dcraveiro"
       ansible_python_interpreter: "/usr/bin/python3"
+      ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
 
 webservers:
   hosts:
@@ -15,3 +16,4 @@ webservers:
       ansible_ssh_pass:  "dcraveiro"
       ansible_sudo_pass:  "dcraveiro"
       ansible_python_interpreter: "/usr/bin/python3"
+      ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
