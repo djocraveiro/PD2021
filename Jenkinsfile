@@ -38,7 +38,7 @@ pipeline {
     environment {
         APP_NAME = "vstore"
         APP_LISTENING_PORT = "8080"
-        PG_CONTAINER_NAME = "postgres_vstore_ci"
+        PG_CONTAINER_NAME = "postgres_vstore_test"
         GIT_COMMIT_REV=''
     }
 
@@ -135,6 +135,12 @@ pipeline {
                     sh "docker tag ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP}:latest"
                 }
             }
+            post {
+                always {
+                    sh 'docker stop $PG_CONTAINER_NAME'
+                    sh 'docker volume rm $PG_CONTAINER_NAME'
+                }
+            }
         }
 
         stage('Deploy') {
@@ -153,10 +159,6 @@ pipeline {
     post {
         always {
             echo 'Lets clean up this mess -.-'
-
-            sh 'docker stop $PG_CONTAINER_NAME'
-            sh 'docker volume rm $PG_CONTAINER_NAME'
-
             //deleteDir() /* clean up our workspace */
         }
         success {
