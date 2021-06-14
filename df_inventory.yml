@@ -1,0 +1,17 @@
+dbservers:
+  hosts:
+    machine_2:
+      ansible_ssh_host:  "localhost"
+      ansible_ssh_user:  "dcraveiro"
+      ansible_ssh_pass:  "dcraveiro"
+      ansible_sudo_pass:  "dcraveiro"
+      ansible_python_interpreter: "/usr/bin/python3"
+
+webservers:
+  hosts:
+    machine_1:
+      ansible_ssh_host:  "localhost"
+      ansible_ssh_user:  "dcraveiro"
+      ansible_ssh_pass:  "dcraveiro"
+      ansible_sudo_pass:  "dcraveiro"
+      ansible_python_interpreter: "/usr/bin/python3"
