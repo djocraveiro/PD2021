@@ -19,12 +19,12 @@
     #    groups: docker
     #    append: yes
     - name: Install python pip
-      apt:
+      yum:
         name: python-pip
         state: present
 
     - name: Install docker
-      apt:
+      yum:
         name: docker
         state: present
 
