@@ -138,7 +138,7 @@ pipeline {
         }
 
         stage('Deploy') {
-            agent {
+            /*agent {
                 docker {
                     image 'cicd-ansible:latest'
                     args '--network host'
@@ -151,11 +151,11 @@ pipeline {
                     GIT_COMMIT_REV = "15e4ab2"
                 }
 
-                sh "ansible -u root --version"
-                sh "ansible-playbook -u root -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
+                sh "ansible --version"
+                sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
                 
                 //ansible-playbook -i df_inventory ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:15e4ab2 WEB_IMAGE=djocraveiro/pd_2021:15e4ab2'
-            }
+            }*/
             /*steps {
                 echo "=== deploy ==="
                 script {
@@ -169,6 +169,15 @@ pipeline {
                     inventory: 'df_inventory',
                     playbook: 'ansible-playbook.yml'
             }*/
+            steps {
+                echo "=== deploy ==="
+                script {
+                    //TODO remove this block later  
+                    GIT_COMMIT_REV = "15e4ab2"
+                }
+
+                sh "docker run -it --rm -w /work -v \"./:/work\" --entrypoint=/bin/sh devture/ansible:latest \"ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'\""
+            }
         }
     }
 
