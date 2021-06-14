@@ -24,7 +24,7 @@
         name: postgres_vstore_ci
         image: "{{ DB_IMAGE }}"
         state: started
-        detach: true
+        detach: yes
         recreate: yes
         ports:
           - "5432:5432"
@@ -60,7 +60,7 @@
         name: vstore_ci
         image: "{{ WEB_IMAGE }}"
         state: started
-        detach: true
+        detach: yes
         recreate: yes
         ports:
           - "9000:8080"
