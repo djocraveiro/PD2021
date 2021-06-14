@@ -61,6 +61,21 @@ pipeline {
             }
         }
 
+        stage('Package') {
+            agent {
+                docker {
+                    image 'maven:3.8.1-adoptopenjdk-11'
+                    args '--network host -v $HOME/.m2:/root/.m2'
+                    reuseNode true
+                }
+            }
+            steps {
+                echo "=== packaging project ==="
+                sh "mvn package -DskipTests --file ./stock/pom.xml"
+                archiveArtifacts artifacts: 'stock/target/*.jar', fingerprint: true
+            }
+        }
+
         stage('Build Images') {
             steps {
                 echo "=== building images==="
@@ -103,21 +118,6 @@ pipeline {
                 always {
                     junit 'stock/target/surefire-reports/*.xml'
                 }
-            }
-        }
-
-        stage('Package') {
-            agent {
-                docker {
-                    image 'maven:3.8.1-adoptopenjdk-11'
-                    args '--network host -v $HOME/.m2:/root/.m2'
-                    reuseNode true
-                }
-            }
-            steps {
-                echo "=== packaging project ==="
-                sh "mvn package -DskipTests --file ./stock/pom.xml"
-                archiveArtifacts artifacts: 'stock/target/*.jar', fingerprint: true
             }
         }
 
