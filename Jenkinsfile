@@ -140,8 +140,7 @@ pipeline {
         stage('Deploy') {
             agent {
                 docker {
-                    //image 'cicd-ansible:latest'
-                    image 'ansible/ansible-runner:1.4.2'
+                    image 'cicd-ansible:latest'
                     args '--network host -v $HOME/.m2:/root/.m2'
                     reuseNode true
                 }
