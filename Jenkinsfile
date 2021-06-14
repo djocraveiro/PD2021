@@ -176,7 +176,7 @@ pipeline {
                     GIT_COMMIT_REV = "15e4ab2"
                 }
 
-                sh "docker run -it --network host --rm -w /work -v \"\$(pwd)\":/work cicd-ansible:latest ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:15e4ab2 WEB_IMAGE=djocraveiro/pd_2021:15e4ab2'"
+                sh "docker run -i --network host --rm -w /work -v \"\$(pwd)\":/work cicd-ansible:latest ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:15e4ab2 WEB_IMAGE=djocraveiro/pd_2021:15e4ab2'"
                 //sh "docker run -it --rm -w /work -v \"./:/work\" --entrypoint=/bin/sh cicd-ansible:latest \"ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'\""
             }
         }
