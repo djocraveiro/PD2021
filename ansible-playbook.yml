@@ -26,6 +26,7 @@
         state: started
         detach: yes
         recreate: yes
+        restart_policy: on-failure
         ports:
           - "5432:5432"
         network_mode: bridge
@@ -63,6 +64,7 @@
         state: started
         detach: yes
         recreate: yes
+        restart_policy: on-failure
         ports:
           - "9000:8080"
         network_mode: bridge
