@@ -141,8 +141,7 @@ pipeline {
             agent {
                 docker {
                     image 'cicd-ansible:latest'
-                    //args '--network host -v $HOME/.m2:/root/.m2 -v $HOME/.ssh/id_rsa:/root/.ssh/id_rsa:ro --entrypoint=/bin/sh'
-                    reuseNode true
+                    args '--network host -v $HOME/.m2:/root/.m2'
                 }
             }
             steps {
