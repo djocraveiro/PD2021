@@ -138,10 +138,10 @@ pipeline {
         }
 
         stage('Deploy') {
-            agent {
+            /*agent {
                 docker {
                     image 'cicd-ansible:latest'
-                    args '--network host -v $HOME/.m2:/root/.m2'
+                    args '--network host'
                 }
             }
             steps {
@@ -155,19 +155,20 @@ pipeline {
                 sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
                 
                 //ansible-playbook -i df_inventory ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:15e4ab2 WEB_IMAGE=djocraveiro/pd_2021:15e4ab2'
-            }
-            /*steps {
+            }*/
+            steps {
                 echo "=== deploy ==="
                 script {
                     //TODO remove this block later  
                     GIT_COMMIT_REV = "15e4ab2"
                 }
 
-                sh "ansible --version"
-                sh "ansible-playbook -i ${params.ANSIBLE_INVENTORY} ansible-playbook.yml -e 'DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}'"
-                
-                //ansible-playbook -i df_inventory ansible-playbook.yml -e 'DB_IMAGE=djocraveiro/pd_2021_pg:15e4ab2 WEB_IMAGE=djocraveiro/pd_2021:15e4ab2'
-            }*/
+                ansiblePlaybook installation: 'ansible',
+                    disableHostKeyChecking: true,
+                    extras: "-e DB_IMAGE=${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV} WEB_IMAGE=${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}",
+                    inventory: 'df_inventory',
+                    playbook: 'ansible-playbook.yml'
+            }
         }
     }
 
