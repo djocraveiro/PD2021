@@ -18,7 +18,7 @@ pipeline {
             description: 'run tests',
             name : 'RUN_TESTS')
         booleanParam (
-            defaultValue: false,
+            defaultValue: true,
             description: 'publish images to dockerhub',
             name : 'PUBLISH_IMAGES')
         string (
