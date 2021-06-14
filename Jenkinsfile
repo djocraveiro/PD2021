@@ -141,7 +141,7 @@ pipeline {
             agent {
                 docker {
                     //image 'cicd-ansible:latest'
-                    image: 'ansible/ansible-runner:1.4.2'
+                    image 'ansible/ansible-runner:1.4.2'
                     args '--network host -v $HOME/.m2:/root/.m2'
                     reuseNode true
                 }
