@@ -95,7 +95,11 @@ pipeline {
             }
             steps {
                 echo "=== prepare for testing ==="
-                sh "docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data' -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
+                //sh "docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data' -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}"
+                sh '''docker run --rm --network host --name $PG_CONTAINER_NAME -p 5432:5432
+                    -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -v '$PG_CONTAINER_NAME:/var/lib/postgresql/data'
+                    -d ${params.DOCKERHUB_REP_DB}:${GIT_COMMIT_REV}
+                '''
             }
         }
 
