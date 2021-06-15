@@ -121,6 +121,17 @@ pipeline {
             }
         }
 
+        tage('Test Cleaning') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
+            steps {
+                echo "=== cleaning test env ==="
+                sh 'docker stop $PG_CONTAINER_NAME'
+                sh 'docker volume rm $PG_CONTAINER_NAME'
+            }
+        }
+
         stage('Push to DockerHub') { 
             when {
                 expression { params.PUBLISH_IMAGES == true }
@@ -136,12 +147,6 @@ pipeline {
                 withDockerRegistry([ credentialsId: params.DOCKERHUB_CREDENTIALS, url: "" ]) {
                     sh "docker push ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV}"
                     sh "docker tag ${params.DOCKERHUB_REP}:${GIT_COMMIT_REV} ${params.DOCKERHUB_REP}:latest"
-                }
-            }
-            post {
-                always {
-                    sh 'docker stop $PG_CONTAINER_NAME'
-                    sh 'docker volume rm $PG_CONTAINER_NAME'
                 }
             }
         }
