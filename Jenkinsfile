@@ -121,7 +121,7 @@ pipeline {
             }
         }
 
-        tage('Test Cleaning') {
+        stage('Test Cleaning') {
             when {
                 expression { params.RUN_TESTS == true }
             }
