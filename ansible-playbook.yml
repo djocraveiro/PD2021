@@ -1,23 +1,41 @@
 - name: Install dbserver
   hosts: dbservers
   become: true
+  gather_facts: true
 
   tasks:
-    #- name: Install aptitude using apt
-    #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
-    #- name: Install required system packages
-    #  shell: curl -sSL https://get.docker.com/ | sh 
-    #  register: result
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
 
-    #- debug:
-    #   var=result
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-    #- name: Add group docker to user guest
-    #  user:
-    #    name: guest
-    #    groups: docker
-    #    append: yes
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install docker
+      yum:
+        name: docker
+        state: present
+
+    - name: start docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+        
+    - name: Install docker-py python module
+      pip:
+        name: docker-py
+        state: present
 
     - name: Create postgres container
       ansible.builtin.docker_container:
@@ -31,6 +49,8 @@
           - "5432:5432"
         network_mode: bridge
         keep_volumes: yes
+        volumes:
+          - /postgres_vstore_db:/var/lib/postgresql/data
         env:
           POSTGRES_USER: "admin"
           POSTGRES_PASSWORD: "admin"
@@ -41,21 +61,38 @@
   become: true
 
   tasks:
-    #- name: Install aptitude using apt
-    #  apt: name=curl state=latest update_cache=yes force_apt_get=yes
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
-    #- name: Install required system packages
-    #  shell: curl -sSL https://get.docker.com/ | sh 
-    #  register: result
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
 
-    #- debug:
-    #   var=result
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-    #- name: Add group docker to user guest
-    #  user:
-    #    name: guest
-    #    groups: docker
-    #    append: yes
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install docker
+      yum:
+        name: docker
+        state: present
+
+    - name: start docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+        
+    - name: Install docker-py python module
+      pip:
+        name: docker-py
+        state: present
 
     - name: Create app container container
       ansible.builtin.docker_container:
@@ -68,5 +105,8 @@
         ports:
           - "9000:8080"
         network_mode: bridge
+        keep_volumes: yes
+        volumes:
+          - /vstore_ci_tmp:/tmp
         env:
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://172.17.0.1:5432/stock_db"
+          SPRING_DATASOURCE_URL: "{{ db_conn_string }}"

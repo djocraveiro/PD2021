@@ -17,3 +17,4 @@ webservers:
       ansible_sudo_pass: "ansible-user2"
       ansible_python_interpreter: "/usr/bin/python3"
       ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+      db_conn_string: "jdbc:postgresql://172.17.0.1:5432/stock_db"
