@@ -3,6 +3,9 @@
   become: true
 
   tasks:
+    - name: Install aptitude using apt
+      apt: name=curl state=latest update_cache=yes force_apt_get=yes
+
     - name: Install python pip
       yum:
         name: python-pip

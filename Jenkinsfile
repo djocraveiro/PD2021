@@ -162,7 +162,8 @@ pipeline {
     post {
         always {
             echo 'Lets clean up this mess -.-'
-            deleteDir() /* clean up our workspace */
+            //TODO
+            //deleteDir() /* clean up our workspace */
         }
         success {
             echo 'I have succeeded :D'
