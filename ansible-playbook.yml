@@ -59,12 +59,38 @@
   become: true
 
   tasks:
-    - name: Install aptitude using apt
-      apt: name=curl state=latest update_cache=yes force_apt_get=yes
+    -- name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
     - name: Install required system packages
-      shell: curl -sSL https://get.docker.com/ | sh 
-      register: result
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install docker
+      yum:
+        name: docker
+        state: present
+
+    - name: start docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+        
+    - name: Install docker-py python module
+      pip:
+        name: docker-py
+        state: present
 
     - name: Create app container container
       ansible.builtin.docker_container:
