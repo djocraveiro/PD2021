@@ -1,15 +1,16 @@
 - name: Install dbserver
   hosts: dbservers
   become: true
+  gather_facts: true
 
   tasks:
     - name: Install aptitude using apt
       apt: name=curl state=latest update_cache=yes force_apt_get=yes
 
-    - name: Install python pip
-      yum:
-        name: python-pip
-        state: present
+    #- name: Install python pip
+    #  yum:
+    #    name: python-pip
+    #    state: present
 
     - name: Install docker
       yum:
@@ -22,10 +23,10 @@
         state: started
         enabled: yes
         
-    - name: Install docker-py python module
-      pip:
-        name: docker-py
-        state: present
+    #- name: Install docker-py python module
+    #  pip:
+    #    name: docker-py
+    #    state: present
 
     - name: Create postgres container
       ansible.builtin.docker_container:
