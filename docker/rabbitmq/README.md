@@ -1,4 +1,4 @@
-# Postgres
+# Requirements
 Require docker and docker-compose already installed.
 
 
